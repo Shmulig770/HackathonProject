@@ -5,7 +5,6 @@ def key_listening():
         listening.join()
 
 def letter_import(letter):
-    global a
     letter = str(letter)
     letter = letter.replace("'", "")
     if letter in ['Key.space', 'Key.enter']:
